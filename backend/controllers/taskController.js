@@ -1,6 +1,12 @@
 import { readFile, writeFile } from "fs/promises";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import path from "path";
 
-const TASKS_FILE = "./tasks.json";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const TASKS_FILE = path.join(__dirname, "../data/tasks.json");
 
 // Read tasks
 async function readTasks() {

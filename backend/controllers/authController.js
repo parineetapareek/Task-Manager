@@ -1,7 +1,13 @@
 import { readFile, writeFile } from "fs/promises";
 import jwt from "jsonwebtoken";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import path from "path";
 
-const USERS_FILE = "./users.json";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const USERS_FILE = path.join(__dirname, "../data/users.json");
 const JWT_SECRET = "supersecretkey"; 
 
 async function readUsers() {
