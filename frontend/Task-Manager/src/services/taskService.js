@@ -6,7 +6,7 @@ const authHeader = () => ({
   },
 });
 
-export const API_URL = "http://localhost:5000/tasks";
+export const API_URL = "https://task-manager-9c40.onrender.com/tasks";
 
 export const getTasks = () => {
   return axios.get(API_URL, authHeader());

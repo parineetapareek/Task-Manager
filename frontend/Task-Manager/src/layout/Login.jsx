@@ -7,9 +7,10 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { successToast, errorToast } from "../utils/toast";
+import { loginUser } from "../services/authService";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,10 +22,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
-        username,
-        password,
-      });
+      const res = await loginUser({ username, password });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -78,6 +76,7 @@ const Login = () => {
             >
               Login
             </Button>
+
             <Button
               fullWidth
               sx={{ mt: 2, color: "#0F4C3A" }}

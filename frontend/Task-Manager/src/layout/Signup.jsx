@@ -7,9 +7,10 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { successToast, errorToast } from "../utils/toast";
+import { signupUser, loginUser } from "../services/authService";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -22,24 +23,18 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:5000/api/auth/signup", {
-        username,
-        password,
-        name,
-      });
-
+      // SIGNUP
+      await signupUser({ username, password, name });
       successToast("Signup successful!");
 
       // AUTO LOGIN
-      const loginRes = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        { username, password }
-      );
+      const loginRes = await loginUser({ username, password });
 
       localStorage.setItem("token", loginRes.data.token);
       localStorage.setItem("user", JSON.stringify(loginRes.data.user));
 
-      setTimeout(() => navigate("/dashboard"), 500);
+      // Redirect
+      navigate("/dashboard");
     } catch (err) {
       errorToast(err.response?.data?.message || "Signup failed");
     }
