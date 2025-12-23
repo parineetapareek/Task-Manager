@@ -4,8 +4,13 @@ import taskRoutes from "./routes/taskRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+
+app.use(cors({
+  origin: "https://precious-alpaca-87be1f.netlify.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
 app.use("/tasks", taskRoutes);
 app.use("/api/auth", authRoutes);
