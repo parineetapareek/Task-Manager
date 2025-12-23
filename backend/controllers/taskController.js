@@ -17,23 +17,25 @@ async function writeTasks(tasks) {
   await writeFile(TASKS_FILE, JSON.stringify(tasks, null, 2));
 }
 
-// GET all tasks
+// GET tasks (Only user’s tasks)
 export const getTasks = async (req, res) => {
   const tasks = await readTasks();
-  res.json(tasks);
+  const filtered = tasks.filter((t) => t.userId === req.user.id);
+  res.json(filtered);
 };
 
 // POST new task
 export const addTask = async (req, res) => {
   const { title, description, priority, status, dueDate } = req.body;
+  const userId = req.user.id;
 
-  if (!title)
-    return res.status(400).json({ message: "Title is required" });
+  if (!title) return res.status(400).json({ message: "Title is required" });
 
   const tasks = await readTasks();
 
   const newTask = {
     id: Date.now().toString(),
+    userId, 
     title,
     description: description || "",
     priority: priority || "Medium",
@@ -55,8 +57,11 @@ export const updateTask = async (req, res) => {
   const tasks = await readTasks();
   const index = tasks.findIndex((t) => t.id === id);
 
-  if (index === -1)
-    return res.status(404).json({ message: "Task not found" });
+  if (index === -1) return res.status(404).json({ message: "Task not found" });
+
+  if (tasks[index].userId !== req.user.id) {
+    return res.status(403).json({ message: "Not allowed" });
+  }
 
   tasks[index] = {
     ...tasks[index],
@@ -77,10 +82,15 @@ export const deleteTask = async (req, res) => {
   const { id } = req.params;
 
   const tasks = await readTasks();
-  const filtered = tasks.filter((t) => t.id !== id);
+  const task = tasks.find((t) => t.id === id);
 
-  if (filtered.length === tasks.length)
-    return res.status(404).json({ message: "Task not found" });
+  if (!task) return res.status(404).json({ message: "Task not found" });
+
+  if (task.userId !== req.user.id) {
+    return res.status(403).json({ message: "Not allowed" });
+  }
+
+  const filtered = tasks.filter((t) => t.id !== id);
 
   await writeTasks(filtered);
 

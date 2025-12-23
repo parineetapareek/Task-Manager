@@ -1,24 +1,25 @@
 import axios from "axios";
 
-// CHANGE THIS IF NEEDED
+const authHeader = () => ({
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+});
+
 export const API_URL = "http://localhost:5000/tasks";
 
-// ---------------------- GET ALL TASKS ----------------------
 export const getTasks = () => {
-  return axios.get(API_URL);
+  return axios.get(API_URL, authHeader());
 };
 
-// ---------------------- CREATE TASK ----------------------
 export const createTask = (task) => {
-  return axios.post(API_URL, task);
+  return axios.post(API_URL, task, authHeader());
 };
 
-// ---------------------- UPDATE TASK ----------------------
 export const updateTask = (id, updatedTask) => {
-  return axios.put(`${API_URL}/${id}`, updatedTask);
+  return axios.put(`${API_URL}/${id}`, updatedTask, authHeader());
 };
 
-// ---------------------- DELETE TASK ----------------------
 export const deleteTask = (id) => {
-  return axios.delete(`${API_URL}/${id}`);
+  return axios.delete(`${API_URL}/${id}`, authHeader());
 };
