@@ -14,10 +14,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import { deleteTask } from "../services/taskService";
 import TaskForm from "./TaskForm";
+import DeleteConfirm from "./DeleteConfirm";
+
+import { successToast, errorToast } from "../utils/toast";
 
 const ManageTaskCards = ({ task, reload }) => {
-  // Modal state
+  // Edit modal
   const [open, setOpen] = useState(false);
+
+  // Delete modal
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   // priority colors
   const priorityColor = {
@@ -31,12 +37,6 @@ const ManageTaskCards = ({ task, reload }) => {
     Next: "#F9F6EF",
     "In Progress": "#EAF7F1",
     Completed: "#E6F6ED",
-  };
-
-  // DELETE HANDLER
-  const handleDelete = async () => {
-    await deleteTask(task.id);
-    reload();
   };
 
   return (
@@ -97,14 +97,12 @@ const ManageTaskCards = ({ task, reload }) => {
           {/* Action Buttons */}
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             {/* OPEN EDIT MODAL */}
-            <IconButton
-              sx={{ color: "#0F4C3A" }}
-              onClick={() => setOpen(true)}
-            >
+            <IconButton sx={{ color: "#0F4C3A" }} onClick={() => setOpen(true)}>
               <EditIcon />
             </IconButton>
 
-            <IconButton color="error" onClick={handleDelete}>
+            {/* OPEN DELETE MODAL */}
+            <IconButton color="error" onClick={() => setDeleteOpen(true)}>
               <DeleteIcon />
             </IconButton>
           </Box>
@@ -117,6 +115,22 @@ const ManageTaskCards = ({ task, reload }) => {
         onClose={() => setOpen(false)}
         task={task}
         reload={reload}
+      />
+
+      {/* DELETE CONFIRM MODAL */}
+      <DeleteConfirm
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={async () => {
+          try {
+            await deleteTask(task.id);
+            successToast("Task deleted");
+            reload();
+          } catch (err) {
+            errorToast("Delete failed");
+          }
+          setDeleteOpen(false);
+        }}
       />
     </>
   );

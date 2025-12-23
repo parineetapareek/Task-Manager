@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 
 import { updateTask } from "../services/taskService";
+import { successToast, errorToast } from "../utils/toast";
 
 const TaskForm = ({ open, onClose, task, reload }) => {
   const [title, setTitle] = useState("");
@@ -44,8 +45,10 @@ const TaskForm = ({ open, onClose, task, reload }) => {
       await updateTask(task.id, updated);
       reload();
       onClose();
+      successToast("Task updated");
     } catch (err) {
       console.log("Error updating task:", err);
+      errorToast("Update failed");
     }
   };
 

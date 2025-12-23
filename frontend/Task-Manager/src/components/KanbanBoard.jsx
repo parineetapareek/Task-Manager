@@ -17,11 +17,18 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { updateTask, deleteTask } from "../services/taskService";
 import TaskForm from "./TaskForm";
+import DeleteConfirm from "./DeleteConfirm";
+
+import { successToast, errorToast } from "../utils/toast";
 
 const KanbanBoard = ({ tasks, reload }) => {
-  // For edit modal
+  // EDIT modal
   const [open, setOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+
+  // DELETE modal
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const nextTasks = tasks.filter((t) => t.status === "Next");
   const inProgressTasks = tasks.filter((t) => t.status === "In Progress");
@@ -65,7 +72,7 @@ const KanbanBoard = ({ tasks, reload }) => {
           {task.title}
         </Typography>
 
-        {/* Chips */}
+        {/* Priority Chip */}
         <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
           <Chip
             label={task.priority}
@@ -84,8 +91,13 @@ const KanbanBoard = ({ tasks, reload }) => {
           {task.status !== "In Progress" && (
             <IconButton
               onClick={async () => {
-                await updateTask(task.id, { status: "In Progress" });
-                reload();
+                try {
+                  await updateTask(task.id, { status: "In Progress" });
+                  reload();
+                  successToast("Moved to In Progress");
+                } catch {
+                  errorToast("Failed to update status");
+                }
               }}
               sx={{ color: "#0F4C3A" }}
             >
@@ -97,8 +109,13 @@ const KanbanBoard = ({ tasks, reload }) => {
           {task.status !== "Completed" && (
             <IconButton
               onClick={async () => {
-                await updateTask(task.id, { status: "Completed" });
-                reload();
+                try {
+                  await updateTask(task.id, { status: "Completed" });
+                  reload();
+                  successToast("Task completed 🎉");
+                } catch {
+                  errorToast("Failed to update status");
+                }
               }}
               sx={{ color: "#2E7D32" }}
             >
@@ -119,9 +136,9 @@ const KanbanBoard = ({ tasks, reload }) => {
 
           {/* DELETE BUTTON */}
           <IconButton
-            onClick={async () => {
-              await deleteTask(task.id);
-              reload();
+            onClick={() => {
+              setDeleteId(task.id);
+              setDeleteOpen(true);
             }}
             sx={{ color: "#D32F2F" }}
           >
@@ -181,6 +198,22 @@ const KanbanBoard = ({ tasks, reload }) => {
         onClose={() => setOpen(false)}
         task={selectedTask}
         reload={reload}
+      />
+
+      {/* DELETE CONFIRM MODAL */}
+      <DeleteConfirm
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={async () => {
+          try {
+            await deleteTask(deleteId);
+            successToast("Task deleted");
+            reload();
+          } catch {
+            errorToast("Delete failed");
+          }
+          setDeleteOpen(false);
+        }}
       />
     </>
   );

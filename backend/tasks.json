@@ -1,8 +1,10 @@
 [
   {
-    "id": "1766493871913",
-    "title": "Create Task Manager App",
-    "description": "I have to create this for my job",
-    "completed": false
+    "id": "1766507483598",
+    "title": "Revise DBMS",
+    "description": "",
+    "priority": "Medium",
+    "status": "Next",
+    "dueDate": "2025-12-24"
   }
 ]

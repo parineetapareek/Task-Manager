@@ -8,7 +8,10 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
+
 import { createTask } from "../services/taskService";
+import { successToast, errorToast } from "../utils/toast";
+
 import { useNavigate } from "react-router-dom";
 
 const CreateTask = () => {
@@ -35,10 +38,14 @@ const CreateTask = () => {
     try {
       await createTask(taskData);
 
-      // OPTIONAL: redirect
-      navigate("/manage-tasks");
+      successToast("Task created");
+
+      // Delay navigation slightly to let toast show
+      setTimeout(() => navigate("/manage-tasks"), 300);
+
     } catch (err) {
       console.log("Error creating task:", err);
+      errorToast("Failed to create task");
     }
   };
 

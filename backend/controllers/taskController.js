@@ -25,7 +25,7 @@ export const getTasks = async (req, res) => {
 
 // POST new task
 export const addTask = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, priority, status, dueDate } = req.body;
 
   if (!title)
     return res.status(400).json({ message: "Title is required" });
@@ -36,7 +36,9 @@ export const addTask = async (req, res) => {
     id: Date.now().toString(),
     title,
     description: description || "",
-    completed: false,
+    priority: priority || "Medium",
+    status: status || "Next",
+    dueDate: dueDate || null,
   };
 
   tasks.push(newTask);
@@ -48,7 +50,7 @@ export const addTask = async (req, res) => {
 // PUT update task
 export const updateTask = async (req, res) => {
   const { id } = req.params;
-  const { title, description, completed } = req.body;
+  const { title, description, priority, status, dueDate } = req.body;
 
   const tasks = await readTasks();
   const index = tasks.findIndex((t) => t.id === id);
@@ -60,7 +62,9 @@ export const updateTask = async (req, res) => {
     ...tasks[index],
     title: title ?? tasks[index].title,
     description: description ?? tasks[index].description,
-    completed: completed ?? tasks[index].completed,
+    priority: priority ?? tasks[index].priority,
+    status: status ?? tasks[index].status,
+    dueDate: dueDate ?? tasks[index].dueDate,
   };
 
   await writeTasks(tasks);
