@@ -5,7 +5,7 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import enUS from "date-fns/locale/en-US";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-// ------------------- DATE LOCALIZER SETUP -------------------
+
 const locales = {
   "en-US": enUS,
 };
@@ -18,7 +18,7 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// ------------------- EVENT STYLING -------------------
+
 const eventStyleGetter = (event) => {
   let color =
     event.priority === "High"

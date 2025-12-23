@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const USERS_FILE = path.join(__dirname, "../data/users.json");
-const JWT_SECRET = "supersecretkey"; 
+const JWT_SECRET = "supersecretkey";
 
 async function readUsers() {
   try {
@@ -48,7 +48,7 @@ export const signupUser = async (req, res) => {
   await writeUsers(users);
 
   // AUTO LOGIN AFTER SIGNUP
-  const token = jwt.sign({ id: newUser.id }, JWT_SECRET);
+  const token = jwt.sign({ id: newUser.id }, JWT_SECRET, { expiresIn: "7d" });
 
   res.status(201).json({
     message: "Signup successful",
@@ -60,7 +60,6 @@ export const signupUser = async (req, res) => {
     },
   });
 };
-
 
 export const loginUser = async (req, res) => {
   const { username, password } = req.body;
@@ -74,7 +73,7 @@ export const loginUser = async (req, res) => {
     return res.status(401).json({ message: "Invalid username or password" });
   }
 
-  const token = jwt.sign({ id: user.id }, JWT_SECRET);
+  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "7d" });
 
   return res.json({
     message: "Login successful",
@@ -87,7 +86,6 @@ export const loginUser = async (req, res) => {
   });
 };
 
-
 export const updateProfile = async (req, res) => {
   const { id } = req.params;
   const { name, username } = req.body;
@@ -97,9 +95,7 @@ export const updateProfile = async (req, res) => {
 
   if (index === -1) return res.status(404).json({ message: "User not found" });
 
-  const exists = users.some(
-    (u) => u.username === username && u.id !== id
-  );
+  const exists = users.some((u) => u.username === username && u.id !== id);
   if (exists)
     return res.status(400).json({ message: "Username already taken" });
 
